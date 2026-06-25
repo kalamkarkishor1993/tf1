@@ -44,6 +44,6 @@ resource "aws_instance" "vm" {
 
   # Fix 3: tags {} चुकीचं होतं → tags = {}
   tags = {
-    Name = "server-01"
+    Name = "server-001"
   }
 }
