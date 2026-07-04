@@ -4,6 +4,7 @@
 *.tfstate
 *.tfstate.*
 *.tfvars
+backend.hcl
 *.tfvars.json
 crash.log
 crash.*.log
