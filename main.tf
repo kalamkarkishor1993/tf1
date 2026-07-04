@@ -1,49 +1,27 @@
-resource "aws_security_group" "firewall" {
-  name   = "test-sg"
-  vpc_id = "vpc-0c2f14cfb74e3d1de"
+# create EC2 instance in ap-south-1 with t3.micro
 
-  # Fix 1: ingress = {} चुकीचं होतं → ingress {} block syntax
-  # Fix 2: cidr_blcok → cidr_blocks (spelling fix)
-  ingress {
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+# Fetch the latest Amazon Linux 2 AMI
+data "aws_ami" "amazon_linux_2" {
+  most_recent = true
+  owners      = ["amazon"]
+
+  filter {
+    name   = "name"
+    values = ["amzn2-ami-hvm-*-x86_64-gp2"]
   }
 
-  ingress {
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
   }
 }
 
-resource "aws_instance" "vm" {
-  ami                    = "ami-0e38835daf6b8a2b9"
-  instance_type          = "t3.micro"
-  key_name               = "ssh_key"
-  vpc_security_group_ids = [aws_security_group.firewall.id]
+# Create EC2 instance
+resource "aws_instance" "app_server" {
+  ami           = data.aws_ami.amazon_linux_2.id
+  instance_type = "t3.micro"
 
-  user_data = <<-EOF
-    #!/bin/bash
-    sudo -i
-    yum update -y
-    yum install httpd -y
-    systemctl start httpd
-    systemctl enable httpd
-    echo "hello world" > /var/www/html/index.html
-  EOF
-
-  # Fix 3: tags {} चुकीचं होतं → tags = {}
   tags = {
-    Name = "server-001"
+    Name = "TF-App-Server"
   }
 }

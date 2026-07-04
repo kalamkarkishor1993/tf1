@@ -1,7 +1,10 @@
+# provider.tf - SECURE VERSION
 provider "aws" {
   region = "ap-south-1"
-    access_key = "AKIA5E7OD3PYPJKX7U2M"
-    secret_key = "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"
+  
+  # Credentials now come from:
+  # 1. Environment variables (AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY)
+  # 2. ~/.aws/credentials file
+  # 3. IAM role (when running on EC2, ECS, Lambda)
+  # 4. OIDC provider (in CI/CD)
 }
-
-
