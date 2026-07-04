@@ -28,9 +28,7 @@ jobs:
       - name: Configure AWS credentials via OIDC
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          # Replace ACCOUNT_ID with your 12-digit AWS Account ID
-          # Example: arn:aws:iam::123456789012:role/TerraformGitHubRole
-          role-to-assume: arn:aws:iam::ACCOUNT_ID:role/TerraformGitHubRole
+          role-to-assume: arn:aws:iam::904053119984:role/TerraformGitHubRole
           aws-region: ${{ env.AWS_REGION }}
           role-session-name: GitHubActionsTerraform
 
