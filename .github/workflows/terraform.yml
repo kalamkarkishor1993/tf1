@@ -7,6 +7,17 @@ on:
   pull_request:
     branches:
       - main
+  workflow_dispatch:
+    inputs:
+      action:
+        description: 'Terraform action to run'
+        required: true
+        default: 'destroy'
+        type: choice
+        options:
+          - plan
+          - apply
+          - destroy
 
 permissions:
   id-token: write
@@ -50,6 +61,7 @@ jobs:
 
       - name: Terraform Plan
         run: terraform plan -out=tfplan
+        if: github.event_name != 'workflow_dispatch' || inputs.action != 'destroy'
 
       - name: Upload TF Plan
         uses: actions/upload-artifact@v4
@@ -74,9 +86,8 @@ jobs:
 
       - name: Terraform Apply
         run: terraform apply -auto-approve tfplan
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || (github.event_name == 'workflow_dispatch' && inputs.action == 'apply')
 
-      - name: Terraform Destroy (Optional)
+      - name: Terraform Destroy
         run: terraform destroy -auto-approve
-        if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
-        continue-on-error: true
+        if: github.event_name == 'workflow_dispatch' && inputs.action == 'destroy'
